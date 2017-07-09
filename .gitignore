@@ -274,3 +274,5 @@ gradle-app.setting
 
 /.idea/*.xml
 /*/build/*
+/web/application.yml
+/batch/application.yml

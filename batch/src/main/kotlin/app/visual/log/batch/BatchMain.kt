@@ -1,5 +1,6 @@
 package app.visual.log.batch
 
+import app.visual.log.batch.tasklet.LogPostTasklet
 import app.visual.log.config.AppConfig
 import org.slf4j.LoggerFactory
 import org.springframework.batch.core.Job
@@ -17,14 +18,20 @@ import org.springframework.core.io.ClassPathResource
 open class BatchMain(
         val appConfig: AppConfig,
         val jobBuilderFactory: JobBuilderFactory,
-        val stepBuilderFactory: StepBuilderFactory
+        val stepBuilderFactory: StepBuilderFactory,
+        val logPostTasklet: LogPostTasklet
 ) {
     private val logger = LoggerFactory.getLogger(this.javaClass)
 
     @Bean
     open fun job(): Job {
         if (appConfig.batch.execJob == "pushlog") {
-
+            return jobBuilderFactory
+                    .get("pushlog")
+                    .incrementer(RunIdIncrementer())
+                    .flow(stepBuilderFactory.get("log-read-post").tasklet(logPostTasklet).build())
+                    .end()
+                    .build()
         }
         return jobBuilderFactory
                 .get("help")

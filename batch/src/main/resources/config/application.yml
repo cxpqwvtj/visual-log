@@ -14,3 +14,5 @@ app:
     url: http://localhost:9200
     transportHost: localhost
     transportPort: 9300
+  batch:
+    execJob: ""
