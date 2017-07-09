@@ -34,7 +34,7 @@ open class BatchMain(
                     val contents = if (resource.exists()) {
                         resource.inputStream.bufferedReader().use { it.readLines() }.joinToString("<br />")
                     } else {
-                        "version:undefined"
+                        "undefined"
                     }
                     logger.info("version:$contents")
                     RepeatStatus.FINISHED
