@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component
 @ConfigurationProperties(prefix = "app", ignoreUnknownFields = true)
 data class AppConfig(
         var batch: Batch = Batch(),
-        var elasticsearch: Elasticsearch = Elasticsearch(),
+        var elasticsearch: Elasticsearch = Elasticsearch()
 ) {
     data class Batch(
             var execJob: String = ""
