@@ -1,0 +1,16 @@
+spring:
+  profiles:
+    active: dev
+  output:
+    ansi:
+      enabled: ALWAYS
+  datasource:
+    driverClassName: org.h2.Driver
+    url: jdbc:h2:mem:PUBLIC
+    username: PUBLIC
+    password: ""
+app:
+  elasticsearch:
+    url: http://localhost:9200
+    transportHost: localhost
+    transportPort: 9300
