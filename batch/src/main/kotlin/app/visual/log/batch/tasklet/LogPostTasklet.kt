@@ -1,6 +1,7 @@
 package app.visual.log.batch.tasklet
 
 import app.visual.log.config.AppConfig
+import app.visual.log.extentions.dateConvert
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.elasticsearch.common.settings.Settings
 import org.elasticsearch.common.transport.InetSocketTransportAddress
@@ -36,7 +37,7 @@ class LogPostTasklet(
                 if (key == "runtime" && value == "-") {
                     // 無視
                 } else if (key == "time") {
-                    map.put(key, SimpleDateFormat("dd/MMM/YYYY:HH:mm:ss Z", Locale.ENGLISH).parse(value))
+                    map.put(key, value.dateConvert())
                 } else {
                     map.put(key, value)
                 }

@@ -1,4 +1,5 @@
 dependencies {
     compile "org.springframework.boot:spring-boot-starter-batch:${springBootVersion}"
     compile project(":service")
+    testCompile "org.dbflute.utflute:utflute-spring:0.6.9"
 }
