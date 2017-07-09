@@ -9,7 +9,7 @@ PUT /_template/logstash
 {
   "template": "logstash-*",
   "mappings": {
-    "fluent": {
+    "log": {
       "properties": {
         "time": {
           "type": "date"
