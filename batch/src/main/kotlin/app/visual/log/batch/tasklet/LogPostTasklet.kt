@@ -34,7 +34,7 @@ class LogPostTasklet(
             line.split("\t").forEach { item ->
                 val key = item.split(":")[0]
                 val value = item.split(":").filterNot { key == it }.joinToString(":")
-                if (key == "runtime" && value == "-") {
+                if ((key == "runtime" || key == "apptime") && value == "-") {
                     // 無視
                 } else if (key == "time") {
                     map.put(key, value.dateConvert())
