@@ -1,0 +1,11 @@
+---
+server.name: kibana
+server.host: "0"
+elasticsearch.url: http://elasticsearch:9200
+
+xpack.graph.enabled: false
+xpack.ml.enabled: false # machine learning
+xpack.monitoring.enabled: false
+xpack.monitoring.ui.container.elasticsearch.enabled: false
+xpack.reporting.enabled: false
+xpack.security.enabled: false
