@@ -1,0 +1,77 @@
+version: "2"
+services:
+
+#####################################################
+# Elasticsearch + Kibana
+#####################################################
+  elasticsearch1:
+    restart: always
+    image: docker.elastic.co/elasticsearch/elasticsearch:5.4.0
+    environment:
+      - TZ=Asia/Tokyo
+      - "ES_JAVA_OPTS=-Xms1024m -Xmx1024m"
+      - http.host=0.0.0.0
+      # - transport.host=127.0.0.1
+      - bootstrap.memory_lock=true
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    mem_limit: 2g
+    volumes:
+      - esdata1:/usr/share/elasticsearch/data
+      - ./elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    ports:
+      - 9200:9200
+      - 9300:9300
+    networks:
+      - esnet
+
+  elasticsearch2:
+    restart: always
+    image: docker.elastic.co/elasticsearch/elasticsearch:5.4.0
+    environment:
+      - TZ=Asia/Tokyo
+      - "ES_JAVA_OPTS=-Xms1024m -Xmx1024m"
+      - http.host=0.0.0.0
+      # - transport.host=127.0.0.1
+      - bootstrap.memory_lock=true
+      - "discovery.zen.ping.unicast.hosts=elasticsearch1"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    mem_limit: 2g
+    volumes:
+      - esdata2:/usr/share/elasticsearch/data
+      - ./elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    networks:
+      - esnet
+
+  kibana:
+    restart: always
+    image: docker.elastic.co/kibana/kibana:5.4.0
+    depends_on:
+      - elasticsearch1
+    links:
+      - elasticsearch1:elasticsearch
+    environment:
+      - TZ=Asia/Tokyo
+    volumes:
+      - ./kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
+    ports:
+      - 5601:5601
+    networks:
+      - esnet
+
+volumes:
+  esdata1:
+    driver: local
+  esdata2:
+    driver: local
+
+#####################################################
+# network settings
+#####################################################
+networks:
+  esnet:
