@@ -16,7 +16,6 @@ import org.springframework.stereotype.Component
 import java.io.File
 import java.net.InetAddress
 import java.text.SimpleDateFormat
-import java.util.*
 
 /**
  * Elasticsearchへログ登録するタスクレットクラスです。
@@ -29,7 +28,14 @@ class LogPostTasklet(
     private val logger = LoggerFactory.getLogger(this.javaClass)
 
     override fun execute(contribution: StepContribution, chunkContext: ChunkContext): RepeatStatus {
-        val logs = File("./logs/access.log").readLines().map { line ->
+        val client = PreBuiltTransportClient(Settings.EMPTY)
+                .addTransportAddress(InetSocketTransportAddress(InetAddress.getByName(appConfig.elasticsearch.transportHost), appConfig.elasticsearch.transportPort))
+        val bulkRequest = client.prepareBulk()
+
+        val lineCount = File(appConfig.batch.logFile).useLines { lineSequences: Sequence<String> -> lineSequences.count() }
+        logger.debug("${lineCount}行のファイルです")
+
+        File(appConfig.batch.logFile).forEachLine { line ->
             val map = mutableMapOf<String, Any>()
             line.split("\t").forEach { item ->
                 val key = item.split(":")[0]
@@ -42,26 +48,17 @@ class LogPostTasklet(
                     map.put(key, value)
                 }
             }
-            map
-        }
 
-        val client = PreBuiltTransportClient(Settings.EMPTY)
-                .addTransportAddress(InetSocketTransportAddress(InetAddress.getByName(appConfig.elasticsearch.transportHost), appConfig.elasticsearch.transportPort))
+            val indexName = "logstash-${SimpleDateFormat("yyyyMMdd").format(map.get("time"))}"
+            val type = "log"
+            bulkRequest.add(client.prepareIndex(indexName, type).setSource(ObjectMapper().writeValueAsBytes(map), XContentType.SMILE))
 
-        val indexName = "logstash-${SimpleDateFormat("yyyyMMdd").format(Date())}"
-        val type = "log"
-
-        val bulkRequest = client.prepareBulk()
-
-        logs.forEach { line ->
-            logger.debug(ObjectMapper().writeValueAsString(line))
-            bulkRequest.add(client.prepareIndex(indexName, type).setSource(ObjectMapper().writeValueAsBytes(line), XContentType.SMILE))
-        }
-
-        val response = bulkRequest.get()
-
-        if (response.hasFailures()) {
-            throw Exception(response.buildFailureMessage())
+            if (bulkRequest.numberOfActions() >= 10000) {
+                val response = bulkRequest.get()
+                if (response.hasFailures()) {
+                    throw Exception(response.buildFailureMessage())
+                }
+            }
         }
 
         return RepeatStatus.FINISHED

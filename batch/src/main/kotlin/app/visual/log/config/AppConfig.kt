@@ -13,7 +13,8 @@ data class AppConfig(
         var elasticsearch: Elasticsearch = Elasticsearch()
 ) {
     data class Batch(
-            var execJob: String = ""
+            var execJob: String = "",
+            var logFile: String = "./logs/access.log"
     )
 
     data class Elasticsearch(
