@@ -18,6 +18,7 @@ data class AppConfig(
     )
 
     data class Elasticsearch(
+            var clusterName: String = "elasticsearch",
             var url: String = "http://localhost:9200",
             var transportHost: String = "localhost",
             var transportPort: Int = 9300,

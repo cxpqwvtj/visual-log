@@ -28,7 +28,7 @@ class LogPostTasklet(
     private val logger = LoggerFactory.getLogger(this.javaClass)
 
     override fun execute(contribution: StepContribution, chunkContext: ChunkContext): RepeatStatus {
-        val client = PreBuiltTransportClient(Settings.EMPTY)
+        val client = PreBuiltTransportClient(Settings.builder().put("cluster.name", appConfig.elasticsearch.clusterName).build())
                 .addTransportAddress(InetSocketTransportAddress(InetAddress.getByName(appConfig.elasticsearch.transportHost), appConfig.elasticsearch.transportPort))
         val bulkRequest = client.prepareBulk()
 
@@ -52,13 +52,10 @@ class LogPostTasklet(
             val indexName = "logstash-${SimpleDateFormat("yyyyMMdd").format(map.get("time"))}"
             val type = "log"
             bulkRequest.add(client.prepareIndex(indexName, type).setSource(ObjectMapper().writeValueAsBytes(map), XContentType.SMILE))
-
-            if (bulkRequest.numberOfActions() >= 10000) {
-                val response = bulkRequest.get()
-                if (response.hasFailures()) {
-                    throw Exception(response.buildFailureMessage())
-                }
-            }
+        }
+        val response = bulkRequest.get()
+        if (response.hasFailures()) {
+            throw Exception(response.buildFailureMessage())
         }
 
         return RepeatStatus.FINISHED
