@@ -15,6 +15,7 @@ docker-compose up -d
 ## ログ取り込み
 
 - `batch/logs/access.log` にファイルを配置
+- `./gradlew batch:bootRun` を実行
 
 ## nginxのログ形式
 
