@@ -1,3 +1,4 @@
+apply plugin: "org.springframework.boot"
 
 dependencies {
   compile("org.springframework.boot:spring-boot-starter-web:${springBootVersion}") {
@@ -7,8 +8,7 @@ dependencies {
   compile "org.springframework.boot:spring-boot-starter-security:${springBootVersion}"
   compile "org.springframework.boot:spring-boot-starter-data-ldap:${springBootVersion}"
   compile "org.springframework.security:spring-security-ldap:4.2.1.RELEASE"
-  compile "org.springframework.boot:spring-boot-devtools:${springBootVersion}"
-  compile project(":service")
+  compile project(":shared")
   testCompile "org.springframework.security:spring-security-test"
   testCompile "org.dbflute.utflute:utflute-spring-web:0.6.9"
 }

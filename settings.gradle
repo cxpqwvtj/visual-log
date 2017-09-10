@@ -15,7 +15,7 @@ include 'api'
 include 'services:webservice'
 */
 
-include 'service'
+include 'shared'
 include 'batch'
 include 'web'
 

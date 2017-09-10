@@ -16,9 +16,6 @@ buildscript {
 subprojects {
   apply plugin: "java"
   apply plugin: "kotlin"
-  apply plugin: "org.springframework.boot"
-  apply plugin: "eclipse"
-  apply plugin: "idea"
 
   sourceCompatibility = 1.8
   targetCompatibility = 1.8
@@ -30,17 +27,6 @@ subprojects {
   dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:${kotlinVersion}"
     compile "com.fasterxml.jackson.module:jackson-module-kotlin:2.8.8"
-    compile("org.springframework.boot:spring-boot-starter-web:${springBootVersion}") {
-      exclude group: "com.fasterxml.jackson.core"
-    }
-    compile "org.springframework.boot:spring-boot-starter-jdbc:${springBootVersion}"
-    compile "com.h2database:h2:1.4.195"
-    compile "org.aspectj:aspectjweaver:1.8.10"
-    compile "org.codehaus.janino:janino:3.0.0"
-    // Elasticsearch用のロガーブリッジ
-    compile "org.apache.logging.log4j:log4j-to-slf4j:2.8.2"
-    compile "org.elasticsearch:elasticsearch:5.4.0"
-    compile "org.elasticsearch.client:transport:5.4.0"
     testCompile "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
     testCompile "org.assertj:assertj-core:3.6.2"
   }
@@ -50,7 +36,7 @@ subprojects {
       resources {
         srcDirs "src/main/resources"
         if (project.hasProperty('profile')) {
-          def additionalDir = "src/main/config/$profile"
+          def additionalDir = "src/main/config/$profile/include"
           println "追加リソースセット(Additional resourcesSets) : $additionalDir"
           srcDirs "$additionalDir"
         }
