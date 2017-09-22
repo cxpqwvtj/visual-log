@@ -11,7 +11,7 @@ spring:
     password: ""
 app:
   elasticsearch:
-    clusterName: docker-cluster
+    clusterName: elasticsearch
     url: http://localhost:9200
     transportHost: localhost
     transportPort: 9300
