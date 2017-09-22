@@ -7,9 +7,9 @@ import java.util.*
 
 fun String.dateConvert(): Date {
     val monthMap = HashMap<Long, String>()
-    monthMap.put(1L, "Jny")
+    monthMap.put(1L, "Jan")
     monthMap.put(2L, "Feb")
-    monthMap.put(3L, "Mch")
+    monthMap.put(3L, "Mar")
     monthMap.put(4L, "Apr")
     monthMap.put(5L, "May")
     monthMap.put(6L, "Jun")
