@@ -1,12 +1,10 @@
 package app.visual.log.batch.tasklet
 
+import app.visual.log.batch.es.ElasticsearchClient
 import app.visual.log.config.AppConfig
 import app.visual.log.extentions.dateConvert
 import com.fasterxml.jackson.databind.ObjectMapper
-import org.elasticsearch.common.settings.Settings
-import org.elasticsearch.common.transport.InetSocketTransportAddress
 import org.elasticsearch.common.xcontent.XContentType
-import org.elasticsearch.transport.client.PreBuiltTransportClient
 import org.slf4j.LoggerFactory
 import org.springframework.batch.core.StepContribution
 import org.springframework.batch.core.scope.context.ChunkContext
@@ -14,7 +12,6 @@ import org.springframework.batch.core.step.tasklet.Tasklet
 import org.springframework.batch.repeat.RepeatStatus
 import org.springframework.stereotype.Component
 import java.io.File
-import java.net.InetAddress
 import java.text.SimpleDateFormat
 
 /**
@@ -22,14 +19,13 @@ import java.text.SimpleDateFormat
  */
 @Component
 class LogPostTasklet(
-        val appConfig: AppConfig
+        val appConfig: AppConfig,
+        val client: ElasticsearchClient
 ) : Tasklet {
 
     private val logger = LoggerFactory.getLogger(this.javaClass)
 
     override fun execute(contribution: StepContribution, chunkContext: ChunkContext): RepeatStatus {
-        val client = PreBuiltTransportClient(Settings.builder().put("cluster.name", appConfig.elasticsearch.clusterName).build())
-                .addTransportAddress(InetSocketTransportAddress(InetAddress.getByName(appConfig.elasticsearch.transportHost), appConfig.elasticsearch.transportPort))
         val bulkRequest = client.prepareBulk()
 
         val lineCount = File(appConfig.batch.logFile).useLines { lineSequences: Sequence<String> -> lineSequences.count() }

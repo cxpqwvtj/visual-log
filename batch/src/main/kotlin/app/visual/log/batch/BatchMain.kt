@@ -1,6 +1,7 @@
 package app.visual.log.batch
 
 import app.visual.log.batch.tasklet.LogPostTasklet
+import app.visual.log.batch.tasklet.TemplateRegisterTasklet
 import app.visual.log.config.AppConfig
 import org.slf4j.LoggerFactory
 import org.springframework.batch.core.Job
@@ -19,7 +20,8 @@ open class BatchMain(
         val appConfig: AppConfig,
         val jobBuilderFactory: JobBuilderFactory,
         val stepBuilderFactory: StepBuilderFactory,
-        val logPostTasklet: LogPostTasklet
+        val logPostTasklet: LogPostTasklet,
+        val templateRegisterTasklet: TemplateRegisterTasklet
 ) {
     private val logger = LoggerFactory.getLogger(this.javaClass)
 
@@ -29,7 +31,9 @@ open class BatchMain(
             return jobBuilderFactory
                     .get("pushlog")
                     .incrementer(RunIdIncrementer())
-                    .flow(stepBuilderFactory.get("log-read-post").tasklet(logPostTasklet).build())
+//                    .flow(stepBuilderFactory.get("log-read-post").tasklet(logPostTasklet).build())
+                    .flow(stepBuilderFactory.get("template-post").tasklet(templateRegisterTasklet).build())
+//                    .next(stepBuilderFactory.get("log-read-post").tasklet(logPostTasklet).build())
                     .end()
                     .build()
         }

@@ -12,7 +12,7 @@ import java.net.InetAddress
  */
 @Component
 class ElasticsearchClient(
-        val appConfig: AppConfig
+        appConfig: AppConfig
 ) : PreBuiltTransportClient(Settings.EMPTY) {
 
     init {
